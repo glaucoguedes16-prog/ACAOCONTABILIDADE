@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ação" />
+  <meta name="description" content="Ação Digital — Central inteligente de ferramentas, informações e soluções empresariais da Ação Contabilidade & Consultoria." />
+  <title>Ação Digital | Inteligência, Gestão e Soluções Empresariais</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <!-- Offline Status Banner -->
+  <div id="offline-banner" class="offline-banner hidden" role="status" aria-live="polite">
+    <div class="container offline-banner__inner">
+      <span class="offline-dot" aria-hidden="true"></span>
+      <span>Você está offline. Algumas ferramentas continuam disponíveis, mas funcionalidades que dependem de internet estão temporariamente indisponíveis.</span>
+    </div>
+  </div>
+
+  <!-- PWA Update Available Banner -->
+  <div id="sw-update-banner" class="update-banner hidden" role="status">
+    <div class="container update-banner__inner">
+      <span>Uma nova versão da plataforma Ação Digital está disponível.</span>
+      <button type="button" id="sw-reload-btn" class="btn btn-sm btn-primary">Atualizar agora</button>
+    </div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header" id="top">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand" data-nav="inicio" aria-label="Ação Digital — Página Inicial">
+        <img src="./assets/simbolo-acao.png" alt="Logo Ação Contabilidade" class="brand-symbol" />
+        <div class="brand-text">
+          <span class="brand-title">AÇÃO <span class="brand-accent">DIGITAL</span></span>
+          <span class="brand-sub">Contabilidade &amp; Consultoria</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Navegação principal">
+        <button type="button" class="nav-link active" data-nav="inicio">Início</button>
+        <button type="button" class="nav-link" data-nav="assistente">Assistente IA</button>
+        <button type="button" class="nav-link" data-nav="ferramentas">Ferramentas</button>
+        <button type="button" class="nav-link" data-nav="simuladores">Simuladores</button>
+        <button type="button" class="nav-link" data-nav="reforma">Reforma Tributária</button>
+        <button type="button" class="nav-link" data-nav="conteudos">Conteúdos</button>
+        <button type="button" class="nav-link" data-nav="servicos">Serviços &amp; Sobre</button>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" id="install-app-btn" class="btn btn-ghost btn-sm" title="Instalar aplicativo no dispositivo">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="hide-xs">Instalar App</span>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-nav="contato">
+          <span>Contato</span>
+        </button>
+        <button type="button" id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-drawer">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobile-drawer-backdrop" class="drawer-backdrop hidden" aria-hidden="true"></div>
+  <aside id="mobile-drawer" class="mobile-drawer" aria-label="Menu mobile" aria-hidden="true">
+    <div class="mobile-drawer__header">
+      <div class="brand">
+        <img src="./assets/simbolo-acao.png" alt="" class="brand-symbol" />
+        <div class="brand-text">
+          <span class="brand-title">AÇÃO <span class="brand-accent">DIGITAL</span></span>
+          <span class="brand-sub">Menu da Plataforma</span>
+        </div>
+      </div>
+      <button type="button" id="mobile-menu-close" class="icon-btn" aria-label="Fechar menu">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="mobile-drawer__nav">
+      <button type="button" class="mobile-nav-item active" data-nav="inicio">Início</button>
+      <button type="button" class="mobile-nav-item" data-nav="assistente">Assistente IA — Ação Inteligente</button>
+      <button type="button" class="mobile-nav-item" data-nav="ferramentas">Ferramentas Empresariais</button>
+      <button type="button" class="mobile-nav-item" data-nav="simuladores">Simuladores &amp; Pré-Atendimento</button>
+      <button type="button" class="mobile-nav-item" data-nav="reforma">Central da Reforma Tributária</button>
+      <button type="button" class="mobile-nav-item" data-nav="conteudos">Conteúdos e Guias</button>
+      <button type="button" class="mobile-nav-item" data-nav="servicos">Serviços &amp; Sobre a Ação</button>
+      <button type="button" class="mobile-nav-item" data-nav="contato">Contato e Unidades</button>
+    </nav>
+    <div class="mobile-drawer__footer">
+      <button type="button" id="mobile-install-btn" class="btn btn-secondary btn-block">Instalar como Aplicativo (PWA)</button>
+      <a href="https://wa.me/5583981212030?text=Ol%C3%A1%2C%20vim%20pela%20plataforma%20A%C3%A7%C3%A3o%20Digital%20e%20gostaria%20de%20atendimento." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block external-online-link">
+        Falar no WhatsApp Oficial
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Application Workspace -->
+  <main class="main-workspace">
+
+    <!-- =========================================================
+         VIEW 1: INÍCIO (HOME & DASHBOARD DE BOAS-VINDAS)
+         ========================================================= -->
+    <section id="view-inicio" class="view-section active" aria-labelledby="hero-heading">
+      <div class="container">
+        <!-- Hero Presentation -->
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="pill-badge">
+              <span class="pill-dot"></span>
+              <span>Plataforma Digital • Ação Contabilidade &amp; Consultoria</span>
+            </div>
+            <h1 id="hero-heading" class="hero-title">
+              Mais clareza para tomar decisões. <span class="text-gold">Mais inteligência</span> para cuidar do seu negócio.
+            </h1>
+            <p class="hero-subtitle">
+              Uma central inteligente com ferramentas, informações e orientações para facilitar o dia a dia da sua empresa.
+            </p>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-primary btn-lg" data-nav="assistente">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>Conversar com a IA</span>
+              </button>
+              <button type="button" class="btn btn-secondary btn-lg" data-nav="ferramentas">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="4" y="2" width="16" height="20" rx="2"/>
+                  <line x1="8" y1="6" x2="16" y2="6"/>
+                  <line x1="8" y1="10" x2="10" y2="10"/>
+                  <line x1="14" y1="10" x2="16" y2="10"/>
+                  <line x1="8" y1="14" x2="10" y2="14"/>
+                  <line x1="14" y1="14" x2="16" y2="14"/>
+                </svg>
+                <span>Explorar ferramentas</span>
+              </button>
+            </div>
+            <div class="hero-trust-row">
+              <div class="trust-item">
+                <span class="trust-check">✓</span>
+                <span>Acesso livre sem login</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-check">✓</span>
+                <span>Calculadoras funcionais offline</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-check">✓</span>
+                <span>Suporte direto com especialistas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Illustrative SaaS Dashboard Preview -->
+          <div class="hero-dashboard-card" aria-label="Painel ilustrativo da plataforma">
+            <div class="dash-card-header">
+              <div class="dash-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <span class="dash-label">Ação Digital • Visão de Módulos</span>
+              <span class="status-chip" id="connection-status-chip">Online</span>
+            </div>
+
+            <div class="dash-modules-preview">
+              <div class="dash-mini-card" data-nav="ferramentas" data-tool="calc-funcionario" role="button" tabindex="0">
+                <div class="dash-mini-top">
+                  <span class="dash-mini-tag">Departamento Pessoal</span>
+                  <span class="dash-arrow">→</span>
+                </div>
+                <strong>Simulador de Custo de Equipe</strong>
+                <p>Projeção de encargos, provisões e benefícios configuráveis.</p>
+                <div class="illustrative-bars" aria-hidden="true">
+                  <span style="height: 45%"></span>
+                  <span style="height: 68%"></span>
+                  <span style="height: 55%"></span>
+                  <span style="height: 88%" class="gold"></span>
+                  <span style="height: 74%"></span>
+                </div>
+              </div>
+
+              <div class="dash-mini-row">
+                <div class="dash-mini-card compact" data-nav="simuladores" role="button" tabindex="0">
+                  <span class="dash-mini-tag">Tributário</span>
+                  <strong>Comparador de Regimes</strong>
+                  <p>MEI, Simples e Presumido</p>
+                </div>
+                <div class="dash-mini-card compact" data-nav="reforma" role="button" tabindex="0">
+                  <span class="dash-mini-tag">Atualização</span>
+                  <strong>Reforma Tributária</strong>
+                  <p>Guia IBS, CBS e transição</p>
+                </div>
+              </div>
+
+              <div class="dash-disclaimer-bar">
+                <span>Painel ilustrativo de navegação. Nenhum dado real de cliente é exibido aqui.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access Shortcuts -->
+        <div class="section-block">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Acesso rápido</h2>
+              <p class="section-desc">Atalhos diretos para as principais soluções da plataforma.</p>
+            </div>
+          </div>
+
+          <div class="shortcuts-grid">
+            <button type="button" class="shortcut-card" data-nav="assistente">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <span class="shortcut-title">Assistente contábil</span>
+              <span class="shortcut-sub">Ação Inteligente (IA)</span>
+            </button>
+
+            <button type="button" class="shortcut-card" data-nav="simuladores" data-sim-tab="sim-impostos">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <span class="shortcut-title">Calculadora de impostos</span>
+              <span class="shortcut-sub">Simulador de regimes</span>
+            </button>
+
+            <button type="button" class="shortcut-card" data-nav="ferramentas" data-tool="calc-funcionario">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="shortcut-title">Custo de funcionário</span>
+              <span class="shortcut-sub">Encargos e provisões</span>
+            </button>
+
+            <button type="button" class="shortcut-card" data-nav="ferramentas" data-tool="calc-faturamento">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+              <span class="shortcut-title">Simulador de empresa</span>
+              <span class="shortcut-sub">Faturamento &amp; Preço</span>
+            </button>
+
+            <button type="button" class="shortcut-card" data-nav="ferramentas" data-tool="check-abertura">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <span class="shortcut-title">Checklist empresarial</span>
+              <span class="shortcut-sub">Abertura e rotina mensal</span>
+            </button>
+
+            <button type="button" class="shortcut-card" data-nav="reforma">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <span class="shortcut-title">Reforma Tributária</span>
+              <span class="shortcut-sub">IBS, CBS e transição</span>
+            </button>
+
+            <button type="button" class="shortcut-card highlight" data-nav="simuladores" data-sim-tab="pre-atendimento">
+              <div class="shortcut-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <span class="shortcut-title">Falar com especialista</span>
+              <span class="shortcut-sub">Triagem e WhatsApp</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Minha Central (Favoritos e Recentes salvos localmente) -->
+        <div class="section-block" id="minha-central-block">
+          <div class="card panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Armazenamento Local • Sem Login</span>
+                <h2 class="section-title-sm">Minha Central — Favoritos e Acessos Recentes</h2>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" data-nav="ferramentas">Gerenciar ferramentas</button>
+            </div>
+            <div class="minha-central-grid">
+              <div>
+                <h3 class="sub-label">Ferramentas Favoritas</h3>
+                <div id="favorites-list" class="chip-list"></div>
+              </div>
+              <div>
+                <h3 class="sub-label">Utilizadas Recentemente</h3>
+                <div id="recent-tools-list" class="chip-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard de Boas-Vindas -->
+        <div class="section-block">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Dashboard de boas-vindas</h2>
+              <p class="section-desc">Explore recursos organizados para apoiar sua gestão empresarial.</p>
+            </div>
+          </div>
+
+          <div class="welcome-dashboard-grid">
+            <!-- Card 1: Ferramentas disponíveis -->
+            <article class="card dash-widget">
+              <div class="dash-widget__head">
+                <h3>Ferramentas disponíveis</h3>
+                <span class="badge badge-gold">7 módulos</span>
+              </div>
+              <p class="muted-text">Calculadoras financeiras, checklists salvos no aparelho e glossário empresarial pesquisável.</p>
+              <ul class="clean-link-list">
+                <li><button type="button" data-nav="ferramentas" data-tool="calc-funcionario">Calculadora de custo de funcionário →</button></li>
+                <li><button type="button" data-nav="ferramentas" data-tool="calc-preco">Calculadora de preço de venda (Margem vs. Markup) →</button></li>
+                <li><button type="button" data-nav="ferramentas" data-tool="calc-faturamento">Calculadora de faturamento e metas →</button></li>
+                <li><button type="button" data-nav="ferramentas" data-tool="glossario">Glossário empresarial (24 termos) →</button></li>
+              </ul>
+            </article>
+
+            <!-- Card 2: Dúvidas frequentes -->
+            <article class="card dash-widget">
+              <div class="dash-widget__head">
+                <h3>Dúvidas frequentes</h3>
+                <span class="badge">IA &amp; Guias</span>
+              </div>
+              <p class="muted-text">Clique em uma pergunta para abrir a explicação inicial no assistente Ação Inteligente.</p>
+              <ul class="clean-link-list">
+                <li><button type="button" class="quick-ask-trigger" data-question="Qual a diferença entre MEI e ME?">Qual a diferença entre MEI e ME? →</button></li>
+                <li><button type="button" class="quick-ask-trigger" data-question="Como funciona o Simples Nacional?">O que é e como funciona o Simples Nacional? →</button></li>
+                <li><button type="button" class="quick-ask-trigger" data-question="Quais documentos preciso para abrir um CNPJ?">Quais documentos preciso para abrir um CNPJ? →</button></li>
+                <li><button type="button" class="quick-ask-trigger" data-question="Como funciona a Reforma Tributária?">O que muda com a Reforma Tributária? →</button></li>
+              </ul>
+            </article>
+
+            <!-- Card 3: Conteúdos recentes -->
+            <article class="card dash-widget">
+              <div class="dash-widget__head">
+                <h3>Conteúdos recentes</h3>
+                <span class="badge">Portal</span>
+              </div>
+              <div id="home-recent-articles" class="mini-article-stack"></div>
+              <button type="button" class="btn btn-secondary btn-sm btn-block mt-1" data-nav="conteudos">Ver todos os conteúdos</button>
+            </article>
+
+            <!-- Card 4: Guias para empresários -->
+            <article class="card dash-widget">
+              <div class="dash-widget__head">
+                <h3>Guias para empresários</h3>
+                <span class="badge">Checklists</span>
+              </div>
+              <p class="muted-text">Roteiros práticos com acompanhamento de progresso salvo diretamente no seu dispositivo.</p>
+              <div class="guide-mini-cards">
+                <button type="button" class="guide-mini-btn" data-nav="ferramentas" data-tool="check-abertura">
+                  <strong>Checklist: Abertura de Empresa</strong>
+                  <span>10 etapas essenciais organizadas</span>
+                </button>
+                <button type="button" class="guide-mini-btn" data-nav="ferramentas" data-tool="check-mensal">
+                  <strong>Checklist: Rotina Empresarial Mensal</strong>
+                  <span>Organização fiscal, financeira e DP</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Card 5: Acesso rápido aos serviços -->
+            <article class="card dash-widget dash-widget--wide">
+              <div class="dash-widget__head">
+                <h3>Acesso rápido aos serviços da Ação</h3>
+                <span class="badge badge-gold">Atendimento Especializado</span>
+              </div>
+              <p class="muted-text">Conheça as áreas de atuação da Ação Contabilidade &amp; Consultoria ou utilize o pré-atendimento inteligente para identificar o setor ideal.</p>
+              <div class="service-pills-row">
+                <button type="button" class="service-pill" data-nav="servicos" data-service="contabil">Gestão Contábil</button>
+                <button type="button" class="service-pill" data-nav="servicos" data-service="fiscal">Fiscal e Tributário</button>
+                <button type="button" class="service-pill" data-nav="servicos" data-service="societario">Consultoria Societária</button>
+                <button type="button" class="service-pill" data-nav="servicos" data-service="trabalhista">Trabalhista e Previdenciário</button>
+                <button type="button" class="service-pill" data-nav="servicos" data-service="personalizados">Serviços Personalizados</button>
+                <button type="button" class="btn btn-primary btn-sm" data-nav="simuladores" data-sim-tab="pre-atendimento">Iniciar Pré-Atendimento</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 2: ASSISTENTE DE IA CONTÁBIL — AÇÃO INTELIGENTE
+         ========================================================= -->
+    <section id="view-assistente" class="view-section" aria-labelledby="ai-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Assistente Digital • Base de Conhecimento Empresarial</span>
+            <h1 id="ai-heading" class="view-title">Ação Inteligente</h1>
+            <p class="view-subtitle">Seu assistente para entender assuntos empresariais, contábeis, tributários e administrativos.</p>
+          </div>
+          <div class="view-header-actions">
+            <span class="mode-badge" id="ai-mode-badge" title="O assistente opera com base de conhecimento local estruturada, sem inventar dados oficiais.">
+              <span class="mode-dot"></span>
+              Modo Demonstrativo Ativo
+            </span>
+            <button type="button" id="ai-clear-btn" class="btn btn-ghost btn-sm">Limpar conversa</button>
+          </div>
+        </div>
+
+        <!-- Mandatory Transparency & Governance Notice -->
+        <div class="notice-box notice-box--gold mb-1">
+          <div class="notice-box__content">
+            <strong>Transparência e Orientação Responsável:</strong>
+            <span>
+              Este assistente opera em <strong>modo demonstrativo inteligente</strong> (funciona inclusive offline) para esclarecer conceitos e orientar dúvidas iniciais. As respostas têm caráter exclusivamente educativo, não inventam alíquotas ou prazos oficiais e <strong>não substituem a análise individual de um contador</strong>.
+            </span>
+          </div>
+          <a id="ai-header-whatsapp" href="https://wa.me/5583981212030?text=Ol%C3%A1%2C%20usei%20o%20assistente%20A%C3%A7%C3%A3o%20Inteligente%20e%20gostaria%20da%20an%C3%A1lise%20de%20um%20especialista." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external-online-link">
+            Solicitar análise de um especialista
+          </a>
+        </div>
+
+        <!-- Chat Workspace -->
+        <div class="chat-shell">
+          <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="Histórico da conversa"></div>
+
+          <!-- Typing Indicator -->
+          <div id="chat-typing" class="chat-typing hidden" aria-hidden="true">
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+            <span>Ação Inteligente está organizando a orientação...</span>
+          </div>
+
+          <!-- Suggested Opening Questions -->
+          <div class="chat-suggestions-bar">
+            <span class="suggestions-label">Perguntas sugeridas:</span>
+            <div id="chat-suggestions" class="suggestions-scroll"></div>
+          </div>
+
+          <!-- Input Composer -->
+          <form id="chat-form" class="chat-composer" novalidate>
+            <label for="chat-input" class="sr-only">Digite sua dúvida contábil ou empresarial</label>
+            <textarea
+              id="chat-input"
+              class="chat-textarea"
+              rows="1"
+              maxlength="800"
+              placeholder="Digite sua dúvida (ex.: diferença entre MEI e ME, folha de pagamento, abertura de CNPJ)..."
+            ></textarea>
+            <button type="submit" id="chat-send-btn" class="btn btn-primary chat-send-btn" aria-label="Enviar mensagem">
+              <span>Enviar</span>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </form>
+          <div class="chat-footer-hint">
+            <span>Pressione <strong>Enter</strong> para enviar ou <strong>Shift + Enter</strong> para quebrar linha. Não informe CPF, senhas ou dados bancários.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 3: CENTRAL DE FERRAMENTAS EMPRESARIAIS
+         ========================================================= -->
+    <section id="view-ferramentas" class="view-section" aria-labelledby="tools-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Utilitários Interativos • Funciona Offline</span>
+            <h1 id="tools-heading" class="view-title">Ferramentas para o seu negócio</h1>
+            <p class="view-subtitle">Calculadoras práticas, checklists salvos no seu dispositivo e glossário empresarial completo.</p>
+          </div>
+        </div>
+
+        <!-- Tool Selector Tabs -->
+        <div class="tool-tabs-bar" role="tablist" aria-label="Selecione uma ferramenta">
+          <button type="button" class="tool-tab active" role="tab" aria-selected="true" data-tool-target="calc-funcionario">Custo de Funcionário</button>
+          <button type="button" class="tool-tab" role="tab" aria-selected="false" data-tool-target="calc-faturamento">Faturamento &amp; Metas</button>
+          <button type="button" class="tool-tab" role="tab" aria-selected="false" data-tool-target="calc-preco">Preço de Venda</button>
+          <button type="button" class="tool-tab" role="tab" aria-selected="false" data-tool-target="check-abertura">Checklist: Abrir Empresa</button>
+          <button type="button" class="tool-tab" role="tab" aria-selected="false" data-tool-target="check-mensal">Checklist Mensal</button>
+          <button type="button" class="tool-tab" role="tab" aria-selected="false" data-tool-target="glossario">Glossário Empresarial</button>
+        </div>
+
+        <!-- TOOL 1: Calculadora de Custo de Funcionário -->
+        <div id="tool-calc-funcionario" class="tool-panel active">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Departamento Pessoal</span>
+                <h2>Calculadora de Custo de Funcionário</h2>
+                <p>Estime o investimento mensal e anual do empregador considerando salário, provisões, encargos configuráveis e benefícios.</p>
+              </div>
+              <button type="button" class="fav-btn" data-fav-id="calc-funcionario" aria-label="Favoritar Calculadora de Custo de Funcionário" title="Salvar em Minha Central">
+                <span class="fav-star">☆</span> <span>Favoritar</span>
+              </button>
+            </div>
+
+            <div class="tool-two-col">
+              <form id="form-calc-funcionario" class="tool-form" novalidate>
+                <div class="form-group">
+                  <label for="emp-salary">Salário Bruto Mensal (R$)</label>
+                  <input type="number" id="emp-salary" class="form-control" min="0" step="50" value="2000" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="emp-regime">Enquadramento / Cenário de Encargos</label>
+                  <select id="emp-regime" class="form-control">
+                    <option value="simples_geral">Simples Nacional (Anexos I, II, III e V — sem CPP patronal na folha)</option>
+                    <option value="simples_anexo4">Simples Nacional (Anexo IV — com CPP patronal sobre folha)</option>
+                    <option value="presumido_real">Lucro Presumido ou Lucro Real (com INSS Patronal, RAT e Terceiros)</option>
+                  </select>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="emp-va">Vale-Alimentação / Refeição (R$/mês)</label>
+                    <input type="number" id="emp-va" class="form-control" min="0" step="10" value="350" />
+                  </div>
+                  <div class="form-group">
+                    <label for="emp-vt-total">Custo Total Vale-Transporte (R$/mês)</label>
+                    <input type="number" id="emp-vt-total" class="form-control" min="0" step="10" value="220" />
+                  </div>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="emp-vt-discount">Desconto VT do Funcionário (%)</label>
+                    <input type="number" id="emp-vt-discount" class="form-control" min="0" max="6" step="0.5" value="6" />
+                    <small class="field-hint">Limite legal padrão: até 6% do salário base.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="emp-other">Outros Benefícios / Custos (R$/mês)</label>
+                    <input type="number" id="emp-other" class="form-control" min="0" step="10" value="0" />
+                  </div>
+                </div>
+
+                <!-- Configurable Parameters Accordion -->
+                <details class="config-details">
+                  <summary>Configurar percentuais de encargos e provisões</summary>
+                  <div class="config-grid">
+                    <div class="form-group">
+                      <label for="cfg-fgts">FGTS Mensal (%)</label>
+                      <input type="number" id="cfg-fgts" class="form-control" min="0" max="20" step="0.1" value="8.0" />
+                    </div>
+                    <div class="form-group">
+                      <label for="cfg-13">Provisão 13º Salário (%)</label>
+                      <input type="number" id="cfg-13" class="form-control" min="0" max="20" step="0.01" value="8.33" />
+                    </div>
+                    <div class="form-group">
+                      <label for="cfg-ferias">Provisão Férias + 1/3 (%)</label>
+                      <input type="number" id="cfg-ferias" class="form-control" min="0" max="25" step="0.01" value="11.11" />
+                    </div>
+                    <div class="form-group">
+                      <label for="cfg-rescisao">Provisão Multa FGTS / Rescisória (%)</label>
+                      <input type="number" id="cfg-rescisao" class="form-control" min="0" max="15" step="0.1" value="3.2" />
+                    </div>
+                    <div class="form-group">
+                      <label for="cfg-patronal">INSS Patronal + RAT + Terceiros (%)</label>
+                      <input type="number" id="cfg-patronal" class="form-control" min="0" max="40" step="0.1" value="0" />
+                    </div>
+                  </div>
+                </details>
+              </form>
+
+              <div class="tool-results-box" aria-live="polite">
+                <div class="kpi-highlight">
+                  <span class="kpi-label">Custo Mensal Total Estimado</span>
+                  <strong class="kpi-value" id="res-emp-monthly">R$ 0,00</strong>
+                  <span class="kpi-sub" id="res-emp-factor">Equivale a 0,00x o salário bruto</span>
+                </div>
+
+                <div class="kpi-grid-2">
+                  <div class="kpi-mini">
+                    <span>Custo Anual Estimado (12 meses)</span>
+                    <strong id="res-emp-annual">R$ 0,00</strong>
+                  </div>
+                  <div class="kpi-mini">
+                    <span>Total Encargos + Provisões</span>
+                    <strong id="res-emp-charges">R$ 0,00</strong>
+                  </div>
+                </div>
+
+                <div class="breakdown-list" id="res-emp-breakdown"></div>
+
+                <div class="disclaimer-note">
+                  <strong>Aviso importante:</strong> Simulação estimativa. O custo real pode variar conforme regime tributário, convenção coletiva, benefícios, enquadramento e legislação aplicável.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 3: Calculadora de Faturamento e Metas -->
+        <div id="tool-calc-faturamento" class="tool-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Gestão Financeira</span>
+                <h2>Calculadora de Faturamento e Metas</h2>
+                <p>Compare períodos, acompanhe o progresso em relação à meta e projete o faturamento anual da empresa.</p>
+              </div>
+              <button type="button" class="fav-btn" data-fav-id="calc-faturamento" aria-label="Favoritar Calculadora de Faturamento">
+                <span class="fav-star">☆</span> <span>Favoritar</span>
+              </button>
+            </div>
+
+            <div class="tool-two-col">
+              <form id="form-calc-faturamento" class="tool-form" novalidate>
+                <div class="form-group">
+                  <label for="rev-prev">Faturamento do Período Anterior (R$)</label>
+                  <input type="number" id="rev-prev" class="form-control" min="0" step="100" value="20000" />
+                </div>
+                <div class="form-group">
+                  <label for="rev-curr">Faturamento do Período Atual (R$)</label>
+                  <input type="number" id="rev-curr" class="form-control" min="0" step="100" value="27000" />
+                </div>
+                <div class="form-group">
+                  <label for="rev-goal">Meta de Faturamento do Período (R$)</label>
+                  <input type="number" id="rev-goal" class="form-control" min="0" step="100" value="32000" />
+                </div>
+                <div class="form-group">
+                  <label for="rev-months">Horizonte de Projeção (meses)</label>
+                  <input type="number" id="rev-months" class="form-control" min="1" max="60" step="1" value="12" />
+                </div>
+              </form>
+
+              <div class="tool-results-box" aria-live="polite">
+                <div class="kpi-highlight">
+                  <span class="kpi-label">Variação entre Períodos</span>
+                  <strong class="kpi-value" id="res-rev-diff">+ R$ 7.000,00 (+35,0%)</strong>
+                  <span class="kpi-sub" id="res-rev-status">Crescimento em relação ao período anterior</span>
+                </div>
+
+                <div class="kpi-grid-2">
+                  <div class="kpi-mini">
+                    <span>Média Mensal (Períodos)</span>
+                    <strong id="res-rev-avg">R$ 23.500,00</strong>
+                  </div>
+                  <div class="kpi-mini">
+                    <span>Faturamento Projetado</span>
+                    <strong id="res-rev-proj">R$ 324.000,00</strong>
+                  </div>
+                </div>
+
+                <div class="goal-progress-card">
+                  <div class="goal-progress-top">
+                    <span>Progresso da Meta</span>
+                    <strong id="res-rev-goal-pct">84,4%</strong>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" id="res-rev-goal-bar" style="width: 84.4%"></div>
+                  </div>
+                  <p class="goal-caption" id="res-rev-goal-remaining">Faltam R$ 5.000,00 para atingir a meta definida.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 4: Calculadora de Preço de Venda -->
+        <div id="tool-calc-preco" class="tool-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Precificação</span>
+                <h2>Calculadora de Preço de Venda</h2>
+                <p>Calcule o preço ideal considerando custos diretos, taxas variáveis sobre a venda e margem de lucro desejada.</p>
+              </div>
+              <button type="button" class="fav-btn" data-fav-id="calc-preco" aria-label="Favoritar Calculadora de Preço de Venda">
+                <span class="fav-star">☆</span> <span>Favoritar</span>
+              </button>
+            </div>
+
+            <div class="tool-two-col">
+              <form id="form-calc-preco" class="tool-form" novalidate>
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="price-cost">Custo do Produto / Serviço (R$)</label>
+                    <input type="number" id="price-cost" class="form-control" min="0" step="1" value="60" />
+                  </div>
+                  <div class="form-group">
+                    <label for="price-pack">Embalagem (R$)</label>
+                    <input type="number" id="price-pack" class="form-control" min="0" step="0.5" value="4" />
+                  </div>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="price-shipping">Frete / Logística (R$)</label>
+                    <input type="number" id="price-shipping" class="form-control" min="0" step="0.5" value="6" />
+                  </div>
+                  <div class="form-group">
+                    <label for="price-other">Outros Custos Diretos (R$)</label>
+                    <input type="number" id="price-other" class="form-control" min="0" step="0.5" value="0" />
+                  </div>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="price-taxes">Taxas sobre Venda — Impostos, Cartão, Comissão (%)</label>
+                    <input type="number" id="price-taxes" class="form-control" min="0" max="95" step="0.5" value="12" />
+                  </div>
+                  <div class="form-group">
+                    <label for="price-margin">Margem de Lucro Líquida Desejada (%)</label>
+                    <input type="number" id="price-margin" class="form-control" min="0" max="95" step="0.5" value="25" />
+                  </div>
+                </div>
+
+                <div id="price-error-box" class="alert-error hidden" role="alert"></div>
+              </form>
+
+              <div class="tool-results-box" aria-live="polite">
+                <div class="kpi-highlight">
+                  <span class="kpi-label">Preço de Venda Sugerido</span>
+                  <strong class="kpi-value" id="res-price-suggested">R$ 111,11</strong>
+                  <span class="kpi-sub" id="res-price-markup">Markup aplicado sobre o custo: +58,7%</span>
+                </div>
+
+                <div class="kpi-grid-3">
+                  <div class="kpi-mini">
+                    <span>Custo Total</span>
+                    <strong id="res-price-total-cost">R$ 70,00</strong>
+                  </div>
+                  <div class="kpi-mini">
+                    <span>Taxas Variáveis</span>
+                    <strong id="res-price-tax-val">R$ 13,33</strong>
+                  </div>
+                  <div class="kpi-mini">
+                    <span>Lucro Estimado</span>
+                    <strong id="res-price-profit">R$ 27,78</strong>
+                  </div>
+                </div>
+
+                <div class="edu-callout">
+                  <h4>Entenda a diferença: Margem vs. Markup</h4>
+                  <p>
+                    <strong>Margem de lucro</strong> é o percentual de ganho calculado <em>sobre o preço final de venda</em> (ex.: R$ 27,78 ÷ R$ 111,11 = 25%). Já o <strong>Markup</strong> é o índice multiplicador aplicado <em>sobre o custo direto</em> para formar o preço (ex.: R$ 70,00 + 58,7% = R$ 111,11). Confundir os dois conceitos é uma das causas mais comuns de prejuízo oculto nas vendas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 5: Checklist para Abrir uma Empresa -->
+        <div id="tool-check-abertura" class="tool-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Consultoria Societária</span>
+                <h2>Checklist para Abrir uma Empresa</h2>
+                <p>Acompanhe cada etapa da formalização do seu negócio. Seu progresso é salvo automaticamente neste dispositivo.</p>
+              </div>
+              <div class="tool-header-btns">
+                <button type="button" class="fav-btn" data-fav-id="check-abertura">
+                  <span class="fav-star">☆</span> <span>Favoritar</span>
+                </button>
+                <button type="button" id="reset-check-abertura" class="btn btn-ghost btn-sm">Reiniciar</button>
+              </div>
+            </div>
+
+            <div class="checklist-progress-bar">
+              <div class="goal-progress-top">
+                <span id="open-check-counter">0 de 10 etapas concluídas</span>
+                <strong id="open-check-pct">0%</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="open-check-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div id="list-check-abertura" class="checklist-items"></div>
+
+            <div class="disclaimer-note mt-1">
+              <strong>Observação:</strong> As etapas, exigências de licenciamento e prazos podem variar conforme atividade econômica (CNAE), município, estado e natureza jurídica escolhida.
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 6: Checklist Empresarial Mensal -->
+        <div id="tool-check-mensal" class="tool-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Organização &amp; Rotina</span>
+                <h2>Checklist Empresarial Mensal</h2>
+                <p>Rotina recomendada para manter documentos fiscais, financeiro e departamento pessoal em dia com a contabilidade.</p>
+              </div>
+              <div class="tool-header-btns">
+                <button type="button" class="fav-btn" data-fav-id="check-mensal">
+                  <span class="fav-star">☆</span> <span>Favoritar</span>
+                </button>
+                <button type="button" id="reset-check-mensal" class="btn btn-ghost btn-sm">Reiniciar</button>
+              </div>
+            </div>
+
+            <div class="checklist-progress-bar">
+              <div class="goal-progress-top">
+                <span id="monthly-check-counter">0 de 9 tarefas concluídas</span>
+                <strong id="monthly-check-pct">0%</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="monthly-check-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div id="list-check-mensal" class="checklist-items"></div>
+
+            <div class="disclaimer-note mt-1">
+              <strong>Aviso:</strong> Esta checklist reúne boas práticas gerais de organização administrativa e não substitui o calendário específico de obrigações legais da sua empresa.
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOL 7: Glossário Empresarial -->
+        <div id="tool-glossario" class="tool-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Educação Empresarial</span>
+                <h2>Glossário Empresarial Interativo</h2>
+                <p>Traduza termos contábeis, fiscais e trabalhistas para uma linguagem clara e prática.</p>
+              </div>
+              <button type="button" class="fav-btn" data-fav-id="glossario">
+                <span class="fav-star">☆</span> <span>Favoritar</span>
+              </button>
+            </div>
+
+            <div class="glossary-controls">
+              <div class="search-input-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="search" id="glossary-search" class="form-control search-control" placeholder="Pesquisar sigla ou termo (ex.: Fator R, DRE, eSocial, DAS, CNAE)..." />
+              </div>
+              <div id="glossary-categories" class="filter-pills"></div>
+            </div>
+
+            <div class="glossary-layout">
+              <div id="glossary-grid" class="glossary-terms-grid"></div>
+              <aside id="glossary-detail-panel" class="glossary-detail-card" aria-live="polite">
+                <span class="eyebrow">Detalhamento do Termo</span>
+                <h3 id="gd-title">Selecione um termo ao lado</h3>
+                <p id="gd-summary" class="muted-text">Clique em qualquer sigla ou conceito para visualizar a explicação simples, exemplo prático e quando procurar o contador.</p>
+                <div id="gd-body" class="hidden">
+                  <div class="gd-section">
+                    <h4>Explicação simples</h4>
+                    <p id="gd-explanation"></p>
+                  </div>
+                  <div class="gd-section">
+                    <h4>Exemplo prático</h4>
+                    <p id="gd-example"></p>
+                  </div>
+                  <div class="gd-section">
+                    <h4>Quando esse assunto é importante</h4>
+                    <p id="gd-importance"></p>
+                  </div>
+                  <div class="gd-section gd-section--gold">
+                    <h4>Quando procurar o contador</h4>
+                    <p id="gd-accountant"></p>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 4: SIMULADORES & PRÉ-ATENDIMENTO INTELIGENTE
+         ========================================================= -->
+    <section id="view-simuladores" class="view-section" aria-labelledby="sim-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Planejamento &amp; Direcionamento</span>
+            <h1 id="sim-heading" class="view-title">Simuladores e Pré-Atendimento</h1>
+            <p class="view-subtitle">Compare cenários tributários de forma educativa ou identifique o setor ideal da Ação para sua demanda.</p>
+          </div>
+        </div>
+
+        <div class="tool-tabs-bar" role="tablist">
+          <button type="button" class="sim-tab active" role="tab" aria-selected="true" data-sim-target="sim-impostos">Simulador de Impostos e Regimes</button>
+          <button type="button" class="sim-tab" role="tab" aria-selected="false" data-sim-target="pre-atendimento">Pré-Atendimento Inteligente</button>
+        </div>
+
+        <!-- Simulador Educativo de Impostos e Regimes Tributários -->
+        <div id="panel-sim-impostos" class="sim-panel active">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Simulador Educativo</span>
+                <h2>Comparativo de Regimes Tributários</h2>
+                <p>Analise características, limites de faturamento e pontos de atenção entre MEI, Simples Nacional e Lucro Presumido.</p>
+              </div>
+              <button type="button" class="fav-btn" data-fav-id="sim-impostos">
+                <span class="fav-star">☆</span> <span>Favoritar</span>
+              </button>
+            </div>
+
+            <div class="sim-inputs-grid">
+              <div class="form-group">
+                <label for="tax-monthly-rev">Faturamento Mensal Estimado (R$)</label>
+                <input type="number" id="tax-monthly-rev" class="form-control" min="0" step="500" value="15000" />
+              </div>
+              <div class="form-group">
+                <label for="tax-annual-rev">Faturamento Anual Estimado (R$)</label>
+                <input type="number" id="tax-annual-rev" class="form-control" min="0" step="1000" value="180000" />
+              </div>
+              <div class="form-group">
+                <label for="tax-activity">Tipo de Atividade Principal</label>
+                <select id="tax-activity" class="form-control">
+                  <option value="comercio">Comércio (Revenda de mercadorias)</option>
+                  <option value="servicos_gerais">Serviços Gerais (Manutenção, TI, estética, etc.)</option>
+                  <option value="servicos_intelectuais">Serviços Regulamentados / Intelectuais (Engenharia, saúde, consultoria)</option>
+                  <option value="industria">Indústria / Fabricação</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tax-cnae">CNAE (Opcional)</label>
+                <input type="text" id="tax-cnae" class="form-control" placeholder="Ex.: 4781-4/00 ou descrição" maxlength="80" />
+              </div>
+              <div class="form-group">
+                <label for="tax-selected-regime">Foco da Simulação</label>
+                <select id="tax-selected-regime" class="form-control">
+                  <option value="comparar">Comparar todos os cenários</option>
+                  <option value="mei">MEI (Microempreendedor Individual)</option>
+                  <option value="simples">Simples Nacional</option>
+                  <option value="presumido">Lucro Presumido</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="tax-sim-output" class="tax-sim-results" aria-live="polite"></div>
+
+            <div class="notice-box notice-box--gold mt-1">
+              <div class="notice-box__content">
+                <strong>Limitação Técnica Transparente:</strong>
+                <span>
+                  Este simulador não aplica alíquotas fixas presumidas porque a tributação real depende do Anexo exato do CNAE, receita bruta acumulada nos últimos 12 meses (RBT12), folha de pagamento (Fator R), substituição tributária (ICMS-ST) e alíquota municipal de ISS.
+                </span>
+              </div>
+              <a id="tax-study-whatsapp" href="https://wa.me/5583981212030?text=Ol%C3%A1%2C%20utilizei%20o%20Simulador%20Tribut%C3%A1rio%20da%20A%C3%A7%C3%A3o%20Digital%20e%20gostaria%20de%20um%20estudo%20tribut%C3%A1rio%20personalizado." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external-online-link">
+                Solicitar estudo tributário
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pré-Atendimento Inteligente -->
+        <div id="panel-pre-atendimento" class="sim-panel">
+          <div class="card tool-card">
+            <div class="tool-card__header">
+              <div>
+                <span class="badge badge-gold">Triagem Inteligente</span>
+                <h2>Pré-Atendimento Inteligente</h2>
+                <p>Responda 4 perguntas rápidas para direcionarmos sua demanda ao setor certo da Ação Contabilidade.</p>
+              </div>
+            </div>
+
+            <div class="triage-grid">
+              <form id="triage-form" class="tool-form" novalidate>
+                <div class="form-group">
+                  <label for="triage-client">1. Você já é cliente da Ação Contabilidade?</label>
+                  <select id="triage-client" class="form-control">
+                    <option value="Ainda não sou cliente">Ainda não sou cliente</option>
+                    <option value="Já sou cliente da Ação">Sim, já sou cliente da Ação</option>
+                    <option value="Estou planejando abrir empresa">Estou planejando abrir minha empresa</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="triage-topic">2. Qual é o assunto principal?</label>
+                  <select id="triage-topic" class="form-control">
+                    <option value="Abertura de empresa">Abertura de empresa</option>
+                    <option value="Contábil">Contábil (DRE, Balanço, Escrituração)</option>
+                    <option value="Fiscal">Fiscal e Tributário (Impostos, Notas, Planejamento)</option>
+                    <option value="Societário">Societário (Alteração contratual, Alvarás, Certidões)</option>
+                    <option value="Departamento Pessoal">Departamento Pessoal (Folha, Admissão, Rescisão, eSocial)</option>
+                    <option value="Financeiro/empresarial">Financeiro / Empresarial / Consultoria</option>
+                    <option value="Outros">Outros assuntos</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="triage-need">3. Qual é a sua principal necessidade?</label>
+                  <input type="text" id="triage-need" class="form-control" maxlength="220" placeholder="Ex.: Abrir uma empresa de serviços, revisar enquadramento tributário, admitir funcionário..." />
+                  <small class="field-hint">Não informe CPF, senhas, dados bancários ou documentos sigilosos.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="triage-goal">4. Como deseja prosseguir?</label>
+                  <select id="triage-goal" class="form-control">
+                    <option value="Solicitar atendimento com especialista">Solicitar atendimento com especialista da equipe</option>
+                    <option value="Receber orientação inicial">Receber apenas uma orientação inicial</option>
+                  </select>
+                </div>
+              </form>
+
+              <div class="tool-results-box" id="triage-result-box" aria-live="polite">
+                <span class="eyebrow">Resultado do Direcionamento</span>
+                <h3 id="triage-dept-title">Setor Societário e Abertura de Empresas</h3>
+                <p id="triage-dept-desc" class="muted-text"></p>
+
+                <div class="triage-summary-card">
+                  <h4>Resumo estruturado da solicitação</h4>
+                  <ul id="triage-summary-list"></ul>
+                </div>
+
+                <div class="edu-callout">
+                  <h4>Próximo passo recomendado</h4>
+                  <p id="triage-next-step"></p>
+                </div>
+
+                <a id="triage-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block mt-1 external-online-link">
+                  Enviar resumo e falar no WhatsApp da Ação
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 5: CENTRAL DA REFORMA TRIBUTÁRIA
+         ========================================================= -->
+    <section id="view-reforma" class="view-section" aria-labelledby="reform-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Atualização Legislativa • Módulo Editável</span>
+            <h1 id="reform-heading" class="view-title">Reforma Tributária — Entenda o que muda para sua empresa</h1>
+            <p class="view-subtitle">Conceitos essenciais sobre IBS, CBS, transição gradual e pontos de atenção para o planejamento empresarial.</p>
+          </div>
+          <a href="https://wa.me/5583981212030?text=Ol%C3%A1%2C%20gostaria%20de%20orienta%C3%A7%C3%A3o%20da%20equipe%20A%C3%A7%C3%A3o%20sobre%20os%20impactos%20da%20Reforma%20Tribut%C3%A1ria%20na%20minha%20empresa." target="_blank" rel="noopener noreferrer" class="btn btn-primary external-online-link">
+            Solicitar orientação tributária
+          </a>
+        </div>
+
+        <div class="notice-box mb-1">
+          <div class="notice-box__content">
+            <strong>Aviso de Atualização Contínua:</strong>
+            <span>
+              As normas infraconstitucionais, alíquotas de referência e procedimentos operacionais da Reforma Tributária passam por regulamentação progressiva. Confirme sempre os impactos específicos do seu setor junto à equipe da Ação Contabilidade.
+            </span>
+          </div>
+        </div>
+
+        <!-- Search inside Reforma Tributária -->
+        <div class="search-input-wrap mb-1">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="reform-search" class="form-control search-control" placeholder="Pesquisar na Central da Reforma Tributária (ex.: IBS, CBS, Simples Nacional, transição, Split Payment)..." />
+        </div>
+
+        <!-- Explanatory Cards (IBS, CBS, Intro) -->
+        <div id="reform-cards-grid" class="reform-cards-grid"></div>
+
+        <!-- Timeline & Glossary -->
+        <div class="reform-split-grid mt-1">
+          <div class="card panel-card">
+            <span class="eyebrow">Cronograma Conceitual</span>
+            <h2 class="section-title-sm">Linha do Tempo de Transição</h2>
+            <p class="muted-text mb-1">Visão geral das etapas previstas na Emenda Constitucional 132/2023 (sujeitas à regulamentação complementar):</p>
+            <div id="reform-timeline" class="timeline-list"></div>
+          </div>
+
+          <div class="card panel-card">
+            <span class="eyebrow">Termos-Chave</span>
+            <h2 class="section-title-sm">Glossário da Reforma Tributária</h2>
+            <div id="reform-glossary" class="reform-glossary-list"></div>
+          </div>
+        </div>
+
+        <!-- FAQs -->
+        <div class="card panel-card mt-1">
+          <span class="eyebrow">Dúvidas Comuns</span>
+          <h2 class="section-title-sm">Perguntas Frequentes sobre a Reforma Tributária</h2>
+          <div id="reform-faqs" class="faq-accordion"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 6: CONTEÚDOS E INFORMAÇÕES
+         ========================================================= -->
+    <section id="view-conteudos" class="view-section" aria-labelledby="content-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Portal de Conhecimento • Material Orientativo</span>
+            <h1 id="content-heading" class="view-title">Conteúdos e Informações</h1>
+            <p class="view-subtitle">Guias práticos e materiais educativos organizados para apoiar empreendedores e gestores.</p>
+          </div>
+        </div>
+
+        <div class="content-toolbar">
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="articles-search" class="form-control search-control" placeholder="Buscar artigos por título, tema ou palavra-chave..." />
+          </div>
+          <div id="articles-categories" class="filter-pills"></div>
+        </div>
+
+        <div id="articles-grid" class="articles-grid"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 7: SERVIÇOS & SOBRE A AÇÃO CONTABILIDADE
+         ========================================================= -->
+    <section id="view-servicos" class="view-section" aria-labelledby="services-heading">
+      <div class="container">
+        <!-- Central de Serviços -->
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Soluções Especializadas</span>
+            <h1 id="services-heading" class="view-title">Central de Serviços da Ação</h1>
+            <p class="view-subtitle">Assessoria contábil, fiscal, societária e trabalhista com precisão, ética e proximidade.</p>
+          </div>
+          <button type="button" class="btn btn-primary" data-nav="simuladores" data-sim-tab="pre-atendimento">
+            Não sei qual setor escolher
+          </button>
+        </div>
+
+        <div id="services-grid" class="services-grid"></div>
+
+        <!-- Sobre a Ação Contabilidade -->
+        <div id="sobre" class="section-block about-section">
+          <div class="card about-hero-card">
+            <div class="about-hero-grid">
+              <div>
+                <span class="eyebrow">Nossa História &amp; Propósito</span>
+                <h2 class="section-title">Tradição desde 1961, evoluindo com tecnologia e proximidade</h2>
+                <p class="about-text">
+                  Em <strong>1961</strong>, <strong>Francisco das Chagas Monte Paiva</strong> acreditava estar montando apenas um modesto escritório contábil. Mas as décadas seguintes fizeram da <strong>Ação Contabilidade &amp; Consultoria</strong> muito mais do que isso: passando entre gerações, a empresa consolidou uma trajetória de confiança, crescimento e evolução com mais de <strong>30 anos de atuação</strong> no mercado.
+                </p>
+                <p class="about-text">
+                  Com unidades em <strong>Catolé do Rocha</strong> e <strong>Campina Grande</strong> na Paraíba, a Ação destaca-se pela <strong>objetividade, correção, modernidade e eficácia</strong> para assessorar empresas de todos os portes, atuando sempre com ética, transparência e responsabilidade.
+                </p>
+                <blockquote class="brand-quote">
+                  “A contabilidade é a linguagem dos negócios.” — Warren Buffett
+                </blockquote>
+              </div>
+
+              <div class="about-metrics-panel">
+                <div class="metric-card">
+                  <strong>+1.000</strong>
+                  <span>Clientes satisfeitos</span>
+                </div>
+                <div class="metric-card">
+                  <strong>+30</strong>
+                  <span>Anos de confiança e excelência</span>
+                </div>
+                <div class="metric-card">
+                  <strong>+85</strong>
+                  <span>Colaboradores capacitados</span>
+                </div>
+                <div class="metric-card">
+                  <strong>1961</strong>
+                  <span>Origem da trajetória familiar</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pilares Institucionais -->
+            <div class="pillars-row">
+              <span class="pillar-tag">Objetividade</span>
+              <span class="pillar-tag">Correção</span>
+              <span class="pillar-tag">Modernidade</span>
+              <span class="pillar-tag">Eficácia</span>
+              <span class="pillar-tag">Ética</span>
+              <span class="pillar-tag">Transparência</span>
+              <span class="pillar-tag">Responsabilidade</span>
+            </div>
+
+            <!-- Linha do Tempo Histórica -->
+            <div class="history-timeline mt-1">
+              <div class="history-step">
+                <span class="history-year">1961</span>
+                <h4>Fundação por Francisco das Chagas Monte Paiva</h4>
+                <p>Início da vocação contábil pautada pela seriedade, confiança e relacionamento próximo com os empreendedores.</p>
+              </div>
+              <div class="history-step">
+                <span class="history-year">Gerações</span>
+                <h4>Consolidação da Ação Contabilidade &amp; Consultoria</h4>
+                <p>Mais de três décadas de atuação estruturada, ampliando equipes especializadas nas áreas contábil, fiscal, societária e trabalhista.</p>
+              </div>
+              <div class="history-step">
+                <span class="history-year">Expansão</span>
+                <h4>Nova Unidade em Campina Grande — PB</h4>
+                <p>Inauguração da Unidade II na Av. Presidente Getúlio Vargas, fortalecendo o suporte presencial e estratégico na Paraíba.</p>
+              </div>
+              <div class="history-step">
+                <span class="history-year">Hoje</span>
+                <h4>Ação Digital</h4>
+                <p>Lançamento da plataforma digital interativa com ferramentas empresariais, orientações e atendimento integrado.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         VIEW 8: CONTATO E UNIDADES
+         ========================================================= -->
+    <section id="view-contato" class="view-section" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="view-header">
+          <div>
+            <span class="eyebrow">Canais Oficiais • Atendimento das 07:00 às 18:00</span>
+            <h1 id="contact-heading" class="view-title">Contato e Unidades</h1>
+            <p class="view-subtitle">Fale diretamente com a equipe da Ação Contabilidade &amp; Consultoria pelos nossos canais oficiais.</p>
+          </div>
+          <span id="office-hours-badge" class="mode-badge">Horário: 07:00 às 18:00</span>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Canais Diretos -->
+          <div class="card panel-card">
+            <h2 class="section-title-sm">Canais de Atendimento</h2>
+            <p class="muted-text mb-1">Escolha o canal mais prático para falar com nossos especialistas:</p>
+
+            <div class="contact-channels-list">
+              <a href="https://wa.me/5583981212030?text=Ol%C3%A1%2C%20vim%20pela%20plataforma%20A%C3%A7%C3%A3o%20Digital%20e%20gostaria%20de%20atendimento." target="_blank" rel="noopener noreferrer" class="channel-item channel-item--gold external-online-link">
+                <div>
+                  <span class="channel-label">WhatsApp Oficial</span>
+                  <strong>(83) 9.8121-2030</strong>
+                </div>
+                <span class="channel-action">Iniciar conversa →</span>
+              </a>
+
+              <a href="tel:+558336600001" class="channel-item">
+                <div>
+                  <span class="channel-label">Telefone Fixo I</span>
+                  <strong>(83) 3660-0001</strong>
+                </div>
+                <span class="channel-action">Ligar agora →</span>
+              </a>
+
+              <a href="tel:+558330999901" class="channel-item">
+                <div>
+                  <span class="channel-label">Telefone Fixo II</span>
+                  <strong>(83) 3099-9901</strong>
+                </div>
+                <span class="channel-action">Ligar agora →</span>
+              </a>
+
+              <a href="mailto:contato@acaocontabilidade.com.br?subject=Contato%20via%20A%C3%A7%C3%A3o%20Digital" class="channel-item">
+                <div>
+                  <span class="channel-label">E-mail Institucional</span>
+                  <strong>contato@acaocontabilidade.com.br</strong>
+                </div>
+                <span class="channel-action">Enviar e-mail →</span>
+              </a>
+
+              <a href="https://www.instagram.com/acaocontabilidadecr/" target="_blank" rel="noopener noreferrer" class="channel-item external-online-link">
+                <div>
+                  <span class="channel-label">Instagram Oficial</span>
+                  <strong>@acaocontabilidadecr</strong>
+                </div>
+                <span class="channel-action">Abrir perfil →</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Gerador de Solicitação Rápida (abre WhatsApp ou E-mail sem fingir servidor) -->
+          <div class="card panel-card">
+            <h2 class="section-title-sm">Solicitar Atendimento Direto</h2>
+            <p class="muted-text mb-1">Preencha os dados básicos abaixo para preparar sua mensagem e abrir diretamente no WhatsApp ou E-mail oficial.</p>
+
+            <form id="contact-builder-form" class="tool-form" novalidate>
+              <div class="form-group">
+                <label for="cb-name">Seu Nome</label>
+                <input type="text" id="cb-name" class="form-control" placeholder="Ex.: João Silva" required maxlength="100" />
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="cb-company">Empresa ou Perfil</label>
+                  <input type="text" id="cb-company" class="form-control" placeholder="Ex.: MEI, Comércio, Abertura..." maxlength="100" />
+                </div>
+                <div class="form-group">
+                  <label for="cb-sector">Área de Interesse</label>
+                  <select id="cb-sector" class="form-control">
+                    <option value="Gestão Contábil">Gestão Contábil</option>
+                    <option value="Fiscal e Tributário">Fiscal e Tributário</option>
+                    <option value="Consultoria Societária / Abertura">Consultoria Societária / Abertura</option>
+                    <option value="Trabalhista e Previdenciário">Trabalhista e Previdenciário</option>
+                    <option value="Serviços Personalizados">Serviços Personalizados</option>
+                    <option value="Outro assunto">Outro assunto</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cb-message">Mensagem</label>
+                <textarea id="cb-message" class="form-control" rows="3" placeholder="Descreva brevemente como podemos ajudar..." required maxlength="500"></textarea>
+                <small class="field-hint">Por segurança, não inclua senhas, CPF ou dados bancários.</small>
+              </div>
+              <div id="cb-error" class="alert-error hidden" role="alert"></div>
+              <div class="form-actions-row">
+                <button type="submit" class="btn btn-primary">Enviar via WhatsApp</button>
+                <button type="button" id="cb-email-btn" class="btn btn-secondary">Abrir no E-mail</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Unidades Presenciais -->
+        <div class="units-grid mt-1">
+          <article class="card unit-card">
+            <span class="badge badge-gold">Unidade I • Matriz</span>
+            <h3>Catolé do Rocha — Paraíba</h3>
+            <p class="unit-address">Rua Américo Hermenegildo, 285, Centro — Catolé do Rocha - PB</p>
+            <p class="unit-hours">Atendimento: Segunda a Sexta, das 07:00 às 18:00</p>
+            <div class="unit-actions">
+              <a href="https://www.google.com/maps/search/?api=1&query=Rua+Americo+Hermenegildo+285+Centro+Catole+do+Rocha+PB" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm external-online-link">
+                Ver no Mapa
+              </a>
+              <a href="tel:+558336600001" class="btn btn-ghost btn-sm">Ligar (83) 3660-0001</a>
+            </div>
+          </article>
+
+          <article class="card unit-card">
+            <span class="badge badge-gold">Unidade II • Expansão</span>
+            <h3>Campina Grande — Paraíba</h3>
+            <p class="unit-address">Av. Presidente Getúlio Vargas, 575, Centro — Campina Grande - PB</p>
+            <p class="unit-hours">Atendimento: Segunda a Sexta, das 07:00 às 18:00</p>
+            <div class="unit-actions">
+              <a href="https://www.google.com/maps/search/?api=1&query=Av+Presidente+Getulio+Vargas+575+Centro+Campina+Grande+PB" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm external-online-link">
+                Ver no Mapa
+              </a>
+              <a href="tel:+558330999901" class="btn btn-ghost btn-sm">Ligar (83) 3099-9901</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="./assets/logo-acao-full.png" alt="Ação Contabilidade & Consultoria" class="footer-logo" />
+        <p>
+          <strong>Ação Digital</strong> — Plataforma complementar de inteligência, ferramentas e orientações da Ação Contabilidade &amp; Consultoria.
+        </p>
+        <p class="footer-note">
+          As calculadoras e o assistente em modo demonstrativo fornecem estimativas educativas e não substituem análise contábil individualizada.
+        </p>
+      </div>
+
+      <div>
+        <h4>Navegação</h4>
+        <ul class="footer-links">
+          <li><button type="button" data-nav="inicio">Início</button></li>
+          <li><button type="button" data-nav="assistente">Assistente IA</button></li>
+          <li><button type="button" data-nav="ferramentas">Ferramentas</button></li>
+          <li><button type="button" data-nav="simuladores">Simuladores</button></li>
+          <li><button type="button" data-nav="reforma">Reforma Tributária</button></li>
+          <li><button type="button" data-nav="conteudos">Conteúdos</button></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Unidades &amp; Contato</h4>
+        <ul class="footer-info">
+          <li><strong>Catolé do Rocha:</strong> Rua Américo Hermenegildo, 285, Centro</li>
+          <li><strong>Campina Grande:</strong> Av. Presidente Getúlio Vargas, 575, Centro</li>
+          <li><strong>WhatsApp:</strong> (83) 9.8121-2030</li>
+          <li><strong>Telefones:</strong> (83) 3660-0001 | (83) 3099-9901</li>
+          <li><strong>E-mail:</strong> contato@acaocontabilidade.com.br</li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Ação Contabilidade &amp; Consultoria. Todos os direitos reservados.</span>
+      <button type="button" id="footer-privacy-btn" class="link-plain">Privacidade e Transparência</button>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Bar (Native App Feel) -->
+  <nav class="mobile-bottom-nav" aria-label="Atalhos inferiores">
+    <button type="button" class="bottom-nav-item active" data-nav="inicio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Início</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-nav="assistente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>IA Ação</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-nav="ferramentas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
+      <span>Ferramentas</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-nav="simuladores">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+      <span>Simular</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-nav="contato">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Contato</span>
+    </button>
+  </nav>
+
+  <!-- Back to Top Button -->
+  <button type="button" id="back-to-top" class="back-to-top hidden" aria-label="Voltar ao topo" title="Voltar ao topo">↑</button>
+
+  <!-- Modal: Article Reader -->
+  <div id="article-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-article-title">
+    <div class="modal-box modal-box--lg">
+      <div class="modal-header">
+        <div>
+          <span id="modal-article-cat" class="badge badge-gold">Categoria</span>
+          <span id="modal-article-meta" class="modal-meta">Data • Leitura</span>
+        </div>
+        <button type="button" class="icon-btn modal-close" data-close-modal="article-modal" aria-label="Fechar artigo">✕</button>
+      </div>
+      <div class="modal-body">
+        <h2 id="modal-article-title" class="modal-title"></h2>
+        <div class="editorial-tag">Material Orientativo • Ação Digital</div>
+        <div id="modal-article-content" class="article-prose"></div>
+        <div class="modal-article-actions">
+          <button type="button" id="share-article-btn" class="btn btn-secondary btn-sm">Compartilhar conteúdo</button>
+          <a id="article-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external-online-link">Tirar dúvida com especialista</a>
+        </div>
+        <div class="related-articles-block">
+          <h4>Conteúdos relacionados</h4>
+          <div id="modal-related-articles" class="related-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: PWA Install Guide -->
+  <div id="install-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-install-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modal-install-title" class="modal-title-sm">Instalar Ação Digital como Aplicativo</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="install-modal" aria-label="Fechar janela">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="install-hero-row">
+          <img src="./icons/icon-192.png" alt="Ícone do app Ação Digital" class="install-app-icon" />
+          <div>
+            <strong>Ação Digital</strong>
+            <p class="muted-text">Acesso direto pela tela inicial e uso das calculadoras e checklists mesmo offline.</p>
+          </div>
+        </div>
+
+        <div id="native-install-trigger-area" class="hidden mb-1">
+          <button type="button" id="trigger-native-install" class="btn btn-primary btn-block">Instalar agora neste dispositivo</button>
+        </div>
+
+        <div class="install-steps-cards">
+          <div class="install-step-box">
+            <h4>Android (Chrome / Edge)</h4>
+            <p>Toque no menu <strong>⋮</strong> (três pontos no canto superior direito) e selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</p>
+          </div>
+          <div class="install-step-box">
+            <h4>iPhone / iPad (Safari)</h4>
+            <p>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta para cima na barra inferior) e escolha <strong>"Adicionar à Tela de Início"</strong>.</p>
+          </div>
+          <div class="install-step-box">
+            <h4>Computador (Chrome / Edge)</h4>
+            <p>Clique no ícone de <strong>instalação</strong> na barra de endereços (lado direito da URL) e confirme em <strong>"Instalar"</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Privacy & Transparency -->
+  <div id="privacy-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-privacy-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modal-privacy-title" class="modal-title-sm">Privacidade, Segurança e Transparência</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="privacy-modal" aria-label="Fechar janela">✕</button>
+      </div>
+      <div class="modal-body article-prose">
+        <p>A plataforma <strong>Ação Digital</strong> foi projetada sob princípios de privacidade por padrão e transparência operacional:</p>
+        <ul>
+          <li><strong>Sem coleta oculta em servidor:</strong> Favoritos, histórico recente de ferramentas e progresso das checklists ficam armazenados exclusivamente no seu próprio navegador (<code>localStorage</code>).</li>
+          <li><strong>Sem solicitação de dados sensíveis:</strong> Não solicitamos CPF, senhas, certificados digitais ou dados bancários.</li>
+          <li><strong>Assistente em Modo Demonstrativo:</strong> As respostas da Ação Inteligente são geradas localmente com base em orientações educativas e não substituem análise contábil individual.</li>
+          <li><strong>Cálculos Estimativos:</strong> Os simuladores utilizam parâmetros configuráveis e ilustrativos para apoio à tomada de decisão.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Application Scripts -->
+  <script src="./js/data.js"></script>
+  <script src="./js/ai-assistant.js"></script>
+  <script src="./js/tools.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
